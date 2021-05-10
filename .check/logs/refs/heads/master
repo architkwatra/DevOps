@@ -1,0 +1,4 @@
+0000000000000000000000000000000000000000 cb7dc59941345b8d713d1b927c8a6cf9e601b0fb akwatra <akwatra@ncsu.edu> 1620182235 -0400	clone: from https://github.ncsu.edu/cscdevops-spring2021/DEVOPS-10.git
+cb7dc59941345b8d713d1b927c8a6cf9e601b0fb e4667006ccd574f9f4101666850be35f7bd2b8d1 akwatra <akwatra@ncsu.edu> 1620223654 -0400	pull: Fast-forward
+e4667006ccd574f9f4101666850be35f7bd2b8d1 de50ea87dccfc8b3f99f52f5130aa312983ad592 akwatra <akwatra@ncsu.edu> 1620228843 -0400	commit: added the kill command for nodejs process
+de50ea87dccfc8b3f99f52f5130aa312983ad592 8a3dfb0520ca9b40286f6f766cc816415c408a6c akwatra <akwatra@ncsu.edu> 1620228871 -0400	pull: Merge made by the 'recursive' strategy.

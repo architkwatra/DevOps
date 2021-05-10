@@ -11,29 +11,37 @@ exports.command = 'setup';
 exports.desc = 'Provision and configure the configuration server';
 exports.builder = yargs => {
     yargs.options({ 
-        privateKey: {
-            describe: 'Install the provided private key on the configuration server',
+        ghUser: {
+            describe: 'Github username',
+            type: 'string'
+        },
+        ghPass: {
+            describe: 'Github password',
             type: 'string'
         }
     });
 };
 
 exports.handler = async argv => {
-    const { privateKey } = argv;
+    const { ghUser, ghPass } = argv;
 
     (async () => {
 
-        await run( privateKey );
+        await run( ghUser, ghPass );
 
     })();
 
 };
 
-async function run(privateKey) {
+async function run(ghUser, ghPass) {
+    if (ghUser === undefined || ghPass === undefined) {
+        console.log(chalk.bgRed("Please enter the github username and password")); 
+        process.exit( result.status );
+    }
 
     console.log(chalk.greenBright('Installing configuration server!'));
     console.log(chalk.blueBright('Provisioning configuration server...'));
-    let result = await child.spawnSync(`bakerx`, `run config-srv focal --ip 192.168.33.20 --sync`.split(' '), {shell:true, stdio: 'inherit'} );
+    let result = await child.spawnSync(`bakerx`, `run config-srv focal --ip 192.168.33.20 --sync --memory 4096`.split(' '), {shell:true, stdio: 'inherit'} );
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
     await new Promise(resolve => setTimeout(resolve, 5000));
 
@@ -49,12 +57,14 @@ async function run(privateKey) {
     result = await sshSync('/bakerx/cm/server-init.sh', 'vagrant@192.168.33.20');
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
-    await buildEnvironmentSetup();
+    await buildEnvironmentSetup(ghUser, ghPass);
     
 }
 
-async function buildEnvironmentSetup(){
-
+async function buildEnvironmentSetup(ghUser, ghPass){
+    ghUser = encodeURIComponent(ghUser);
+    ghPass = encodeURIComponent(ghPass);
+    
     let result = await sshSync('sudo systemctl status jenkins', 'vagrant@192.168.33.20');
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
@@ -92,8 +102,11 @@ async function buildEnvironmentSetup(){
 
     //create API Token
     console.log(chalk.blueBright('API Token...'));
-    result = await child.spawnSync("sed -i -e \'s\/\\r\$\/\\n\/\' cm/api-token.sh", {shell:true, stdio: 'inherit'});
-    result = await sshSync('sudo ansible-playbook --vault-password-file .vault-pass jenkins-api.yml', 'vagrant@192.168.33.20');
+    console.log(chalk.cyanBright(`"user=${ghUser}  pass=${ghPass}"`))
+
+    result = child.spawnSync("sed -i -e \'s\/\\r\$\/\\n\/\' cm/api-token.sh", {shell:true, stdio: 'inherit'});
+    result = sshSync(`sudo ansible-playbook --vault-password-file .vault-pass jenkins-api.yml -e 'user=${ghUser}' -e 'pwd=${ghPass}'`, 'vagrant@192.168.33.20');
+                                                                                                        
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
     //restart jenkins
@@ -101,4 +114,15 @@ async function buildEnvironmentSetup(){
     result = await sshSync('sudo ansible-playbook /bakerx/cm/restart-jenkins.yml', 'vagrant@192.168.33.20');
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
     await fs.unlinkSync('.jenkins-api');
+
+    await setupITrust()
+}
+
+async function setupITrust() {
+
+    // let result = child.spawnSync("chmod +x /bakerx/cm/iTrust-init.sh", {shell:true, stdio: 'inherit'});
+    // result = child.spawnSync("sed -i -e \'s\/\\r\$\/\\n\/\' /bakerx/cm/iTrust-init.sh", {shell:true, stdio: 'inherit'});
+    // result = sshSync('/bakerx/cm/iTrust-init.sh', 'vagrant@192.168.33.20');
+    let result = sshSync('ansible-playbook /bakerx/ansible/itrust.yml', 'vagrant@192.168.33.20');
+    if( result.error ) { console.log(result.error); process.exit( result.status ); }
 }

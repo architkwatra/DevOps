@@ -1,0 +1,7 @@
+# Platform options: linux32, linux64, mac64, win32
+platform: linux64
+
+# Get latest version number for chromedriver
+get_version_url: "http://chromedriver.storage.googleapis.com/LATEST_RELEASE"
+
+upstart_service_name: chromedriver

@@ -7,3 +7,14 @@ ansible/vars.txt
 vagrant@127.0.0.1
 .jenkins-api
 cm/cookies.txt
+test.js
+test_suite_analysis/iTrust2-v8
+test_suite_analysis/.test-file
+test_suite_analysis/.test-file-original
+test_suite_analysis/.test-files-output
+test_suite_analysis/.test-classnames
+test_suite_analysis/.test-files-output
+test_suite_analysis/.test-output2
+test_suite_analysis/.mutations
+test_suite_analysis/.is-mutable
+total-output

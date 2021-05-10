@@ -9,7 +9,10 @@
   "license": "ISC",
   "dependencies": {
     "chalk": "^4.1.0",
+    "fs": "^0.0.1-security",
     "jenkins": "^0.28.1",
+    "path": "^0.12.7",
+    "random-js": "^2.1.0",
     "yargs": "^15.4.1"
   }
 }

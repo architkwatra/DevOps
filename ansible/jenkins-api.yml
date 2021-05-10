@@ -6,5 +6,15 @@
   tasks:
   - name: chmod api-token.sh
     shell: chmod +x /bakerx/cm/api-token.sh
-  - name: Generate API Token
+  - name: Generate API Token 1
+    shell: /bakerx/cm/api-token.sh {{ JENKINS_USER }} {{ JENKINS_PASSWORD }} {{ user }} {{ pwd }}
+    when: 
+      - user is defined
+      - pwd is defined
+  
+  - name: Generate API Token 2
     shell: /bakerx/cm/api-token.sh {{ JENKINS_USER }} {{ JENKINS_PASSWORD }}
+    when: 
+      - user is not defined
+      - pwd is not defined
+  
