@@ -1,0 +1,64 @@
+---
+- name: Update APT package manager repositories cache
+  become: true
+  apt:
+    update_cache: yes
+
+- name: Install pip
+  become: yes
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+        - python3-pip
+
+- name: Install JDK 11
+  become: yes
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+        - openjdk-11-jdk
+        - maven
+
+- name: Install MySql-Server
+  package:
+    name: "mysql-server"
+    state: present
+    update_cache: yes
+  become: yes
+  
+- name: Install PyMysql
+  become: true # needed if the other tasks are not played as root
+  pip:
+    name: pymysql
+    state: present
+
+- name: Install mysql-client
+  package:
+    name: "mysql-client"
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Start/Enable MySql
+  service:
+    name: mysql
+    state: restarted
+    enabled: yes
+
+
+- mysql_user:
+    name: root
+    password: devops10
+    priv: '*.*:ALL,GRANT'
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+  # become: yes
+
+- name: Start/Enable MySql
+  service:
+    name: mysql
+    state: restarted
+    enabled: yes

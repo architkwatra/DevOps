@@ -1,0 +1,9 @@
+
+- name: Install Packages
+  apt: name={{ item }} update_cache=yes state=latest
+  with_items:
+    - npm
+    - nodejs
+    - git
+    - curl
+    - python3-pip

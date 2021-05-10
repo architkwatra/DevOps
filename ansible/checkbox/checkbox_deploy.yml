@@ -1,0 +1,7 @@
+- hosts: checkbox
+  become: true
+  vars_files:
+    - ../vault-vars.yml
+  roles:
+    - role: deploy
+    - role: monitor_agent

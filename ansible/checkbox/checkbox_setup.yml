@@ -1,0 +1,6 @@
+- hosts: checkbox
+  become: true
+  roles:
+    - role: node
+    - role: mongo
+    - role: nginx

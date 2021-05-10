@@ -1,0 +1,5 @@
+- name: ansible playbook to deploy the monitoring application
+  hosts: monitor
+  become: yes
+  roles:
+    - deploy_monitor

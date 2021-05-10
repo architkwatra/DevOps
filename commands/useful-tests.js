@@ -1,3 +1,4 @@
+const chalk = require('chalk');
 const fs = require('fs');
 
 const sshSync = require('../lib/ssh');
@@ -37,6 +38,14 @@ exports.handler = async argv => {
 };
 
 async function run(count, ghUser, ghPass) {
+
+    if (!ghUser || !ghPass) {
+        console.log(chalk.bgRed('Please enter a valid Git user and git password'));
+        process.exit(1);
+    }
+
+    ghUser = encodeURIComponent(ghUser);
+    ghPass = encodeURIComponent(ghPass);
     
     if (fs.existsSync('test_suite_analysis/iTrust2-v8')) {
         let result = await sshSync(`cd /bakerx/test_suite_analysis; sudo rm -rf iTrust2-v8`, 'vagrant@192.168.33.20');

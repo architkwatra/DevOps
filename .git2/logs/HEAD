@@ -1,0 +1,9 @@
+0000000000000000000000000000000000000000 cb7dc59941345b8d713d1b927c8a6cf9e601b0fb akwatra <akwatra@ncsu.edu> 1620182235 -0400	clone: from https://github.ncsu.edu/cscdevops-spring2021/DEVOPS-10.git
+cb7dc59941345b8d713d1b927c8a6cf9e601b0fb e4667006ccd574f9f4101666850be35f7bd2b8d1 akwatra <akwatra@ncsu.edu> 1620223654 -0400	pull: Fast-forward
+e4667006ccd574f9f4101666850be35f7bd2b8d1 de50ea87dccfc8b3f99f52f5130aa312983ad592 akwatra <akwatra@ncsu.edu> 1620228843 -0400	commit: added the kill command for nodejs process
+de50ea87dccfc8b3f99f52f5130aa312983ad592 de50ea87dccfc8b3f99f52f5130aa312983ad592 akwatra <akwatra@ncsu.edu> 1620228861 -0400	reset: moving to HEAD
+de50ea87dccfc8b3f99f52f5130aa312983ad592 8a3dfb0520ca9b40286f6f766cc816415c408a6c akwatra <akwatra@ncsu.edu> 1620228871 -0400	pull: Merge made by the 'recursive' strategy.
+8a3dfb0520ca9b40286f6f766cc816415c408a6c 8a3dfb0520ca9b40286f6f766cc816415c408a6c akwatra <akwatra@ncsu.edu> 1620680207 -0400	reset: moving to HEAD
+8a3dfb0520ca9b40286f6f766cc816415c408a6c d3a491f913c26ac1b585f29aad2088427d9d4762 akwatra <akwatra@ncsu.edu> 1620680209 -0400	checkout: moving from master to M1
+d3a491f913c26ac1b585f29aad2088427d9d4762 bbba554443bdf44bff436172ffb92ab6657e7d97 akwatra <akwatra@ncsu.edu> 1620680492 -0400	checkout: moving from M1 to M2
+bbba554443bdf44bff436172ffb92ab6657e7d97 8a3dfb0520ca9b40286f6f766cc816415c408a6c akwatra <akwatra@ncsu.edu> 1620680596 -0400	checkout: moving from M2 to master

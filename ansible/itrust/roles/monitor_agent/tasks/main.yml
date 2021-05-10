@@ -1,0 +1,37 @@
+- name: Setting the MONITOR_IP as an environment variable
+  lineinfile:
+    path: /etc/environment
+    regexp: '^MONITOR_IP=.+'
+    line: "MONITOR_IP={{hostvars[inventory_hostname]['groups']['monitor'][0]}}"
+    create: yes
+
+- name: Get the gpg key for NodeJS
+  apt_key:
+    url: "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
+    state: present
+
+- name: Install NodeJS (v14) LTS
+  apt_repository:
+    repo: "deb https://deb.nodesource.com/node_14.x {{ ansible_distribution_release }} main"
+    state: present
+    update_cache: yes
+
+- name: Install NodeJS
+  apt:
+    name: nodejs
+    state: present
+
+- name: Copy the agent
+  copy:
+    directory_mode: yes
+    src: /bakerx/agent
+    dest: /tmp
+
+- name: Install forever package
+  command: bash -c "npm install forever -g"
+
+- name: Install the packages for the agent
+  command: bash -c "cd /tmp/agent; npm install"
+
+- name: Start the agent service
+  command: bash -c "cd /tmp/agent && forever stopall && forever start index.js checkbox"

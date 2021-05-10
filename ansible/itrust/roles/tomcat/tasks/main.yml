@@ -1,0 +1,41 @@
+- name: add tomcat group
+  group:
+    name: tomcat
+
+- name: add tomcat user
+  user:
+    name: tomcat
+    group: tomcat
+    home: "{{ home_directory }}/tomcat"
+    createhome: no
+
+- name: create "{{ home_directory }}/tomcat directory"
+  file:
+    path: "{{ home_directory }}/tomcat"
+    state: directory
+    mode: 0755
+
+- name: download & unarchive
+  unarchive:
+    src: http://apache.cs.utah.edu/tomcat/tomcat-9/v9.0.45/bin/apache-tomcat-9.0.45.tar.gz
+    dest: "{{ home_directory }}/tomcat"
+    remote_src: yes
+    extra_opts: [--strip-components=1]
+
+- name: Change ownership
+  file:
+    path: "{{ home_directory }}/tomcat"
+    owner: tomcat
+    group: tomcat
+    mode: "u+rwx,g+rx,o=rx"
+    recurse: yes
+    state: directory
+
+- name: Copy war file
+  ansible.builtin.copy:
+    src: /var/lib/jenkins/workspace/iTrust/iTrust2-v8/iTrust2/target/iTrust2-0.0.1-SNAPSHOT.war
+    dest: "{{ home_directory }}/tomcat/webapps/iTrust2.war"
+
+- name: start tomcat services
+  shell: nohup "{{ home_directory }}/tomcat/bin/startup.sh"
+  become: true

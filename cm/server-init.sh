@@ -11,6 +11,8 @@ sudo add-apt-repository ppa:ansible/ansible -y
 sudo apt-get update
 sudo apt-get install ansible -y
 
+sudo bash -c "echo host_key_checking = False >> /etc/ansible/ansible.cfg"
+
 cd /bakerx/ansible/
 ansible-playbook inventory.yml
 

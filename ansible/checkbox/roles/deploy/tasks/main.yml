@@ -1,0 +1,53 @@
+- name: check if checkbox.io already exists
+  command: bash -c "if [ -d "checkbox.io" ]; then rm -rf "checkbox.io"; fi"
+
+- name: clone Checkbox.io
+  git:
+    repo: 'https://github.com/chrisparnin/checkbox.io.git'
+    dest: "{{ home_directory }}/checkbox.io"
+
+- name: Install NPM Dependencies for Checkbox.io
+  become: true
+  npm:
+    path: "{{ home_directory }}/checkbox.io/server-side/site"
+    state: latest
+
+- name: Edit the default file
+  replace:
+    dest: "{{ home_directory }}/checkbox.io/local-conf/default"
+    regexp: "root (.)+;"
+    replace: "root {{ home_directory }}/checkbox.io/public_html/;"
+
+- name: 'Copy the default file to nginx'
+  become: yes
+  copy:
+    src: "{{ home_directory }}/checkbox.io/local-conf/default"
+    dest: /etc/nginx/sites-available/default
+    remote_src: yes
+    mode: 0644
+
+- name: 'Copy conf file to nginx'
+  become: yes
+  copy:
+    src: "{{ home_directory }}/checkbox.io/local-conf/nginx.conf"
+    dest: /etc/nginx/nginx.conf
+    remote_src: yes
+    mode: 0644
+
+- name: Restart Nginx
+  become: yes
+  service:
+    name: nginx
+    state: restarted
+
+- name: Restarting nginx using forever
+  become: true
+  shell: forever stopall; forever start server.js
+  args:
+    chdir: "{{ home_directory }}/checkbox.io/server-side/site/"
+  environment:
+    MONGO_PORT: "{{ MONGO_PORT }}"
+    APP_PORT: "{{ APP_PORT }}"
+    MONGO_IP: "{{ MONGO_IP }}"
+    MONGO_USER: "{{ MONGO_USER }}"
+    MONGO_PASSWORD: "{{ MONGO_PASSWORD }}"

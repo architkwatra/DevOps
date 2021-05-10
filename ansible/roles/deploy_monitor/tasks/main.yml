@@ -1,0 +1,75 @@
+# - name: Printing things out
+#   ansible.builtin.debug:
+#     msg: The ansible dist {{ ansible_distribution_release }}
+#     msg: The IP addresses {{hostvars[inventory_hostname]['groups']['checkbox'][0]}} {{hostvars[inventory_hostname]['groups']['itrust'][0]}} {{hostvars[inventory_hostname]['groups']['monitor'][0]}}
+
+# Setting environment variables
+- name: Setting the CHECKBOX_IP as an environment variable
+  lineinfile:
+    path: /etc/environment
+    regexp: '^CHECKBOX_IP=.+'
+    line: "CHECKBOX_IP={{hostvars[inventory_hostname]['groups']['checkbox'][0]}}"
+    create: yes
+
+- name: Setting the ITRUST_IP as an environment variable
+  lineinfile:
+    path: /etc/environment
+    regexp: '^ITRUST_IP=.+'
+    line: "ITRUST_IP={{hostvars[inventory_hostname]['groups']['itrust'][0]}}"
+    create: yes
+
+# - name: Setting the MONITOR_IP as an environment variable
+#   lineinfile:
+#     path: /etc/environment
+#     regexp: '^MONITOR_IP=.+'
+#     line: "MONITOR_IP={{hostvars[inventory_hostname]['groups']['monitor'][0]}}"
+#     create: yes
+
+# Installing NodeJS and servers
+- name: Get the gpg key for NodeJS
+  apt_key:
+    url: "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
+    state: present
+
+- name: Install NodeJS (v14) LTS
+  apt_repository:
+    repo: "deb https://deb.nodesource.com/node_14.x {{ ansible_distribution_release }} main"
+    state: present
+    update_cache: yes
+
+- name: Install NodeJS
+  apt:
+    name: nodejs
+    state: present
+
+- name: Install forever
+  command: npm install forever -g
+
+- name: Install redis server
+  command: apt-get install redis-server -y
+
+# setting up the dashboard - workshop
+- name: Copy workshop to monitor virtual machine
+  copy:
+    directory_mode: yes
+    src: /bakerx/dashboard
+    dest: /tmp
+
+- name: Installing the dependencies for dashboard
+  command: bash -c "cd /tmp/dashboard ; npm install"
+
+- name: Start redis server
+  command: bash -c "systemctl stop redis-server; systemctl start redis-server"
+
+- name: Open connection for the redis configuration
+  lineinfile:
+    path: /etc/redis/redis.conf
+    regexp: '^bind 127.0.0.1 ::1'
+    line: "bind 0.0.0.0 ::1"
+    create: yes
+
+- name: Restart redis server service
+  command: bash -c "systemctl restart redis-server"
+
+- name: Run the dashboard
+  command: bash -c "cd /tmp/dashboard && forever stopall && forever start bin/www monitor"

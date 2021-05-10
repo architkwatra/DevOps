@@ -1,0 +1,21 @@
+- name: install mongoDB
+  apt: 
+    name: mongodb
+    state: present
+    update_cache: yes
+
+- name: MongoDB - Running state
+  service:
+    name: mongodb
+    state: restarted
+    
+- name: copy db.js file
+  copy:
+    src: ~/db.js
+    dest: ~/db.js
+  
+- name: MongoDB - Running state
+  shell:
+    cmd: >
+      mongo admin ~/db.js
+  become: true

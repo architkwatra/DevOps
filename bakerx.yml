@@ -1,0 +1,49 @@
+servers:
+  - name: canarymonitor
+    image: focal
+    ip: 192.168.44.31
+    memory: 1024
+    sync: true
+    up: |
+      sudo apt-get update
+
+      #install siege
+      sudo apt-get install siege
+      sudo git clone https://github.com/chrisparnin/checkbox.io-micro-preview
+  - name: blue
+    image: focal
+    ip: 192.168.44.25
+    memory: 1024
+    sync: true
+    up: |
+      sudo apt-get update
+      # redis
+      sudo apt-get -y install redis-server
+      sudo sed -i 's/supervised no/supervised systemd/g' /etc/redis/redis.conf
+      sudo sed -i 's/bind 127.0.0.1 ::1/bind 0.0.0.0/g' /etc/redis/redis.conf
+      sudo systemctl restart redis
+  
+      # node js
+      curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+      sudo apt install nodejs -y
+
+      sudo npm install pm2 -g
+  
+  - name: green
+    image: focal
+    ip: 192.168.44.30
+    memory: 1024
+    sync: true
+    up: |
+      sudo apt-get update
+      # redis
+      sudo apt-get -y install redis-server
+      sudo sed -i 's/supervised no/supervised systemd/g' /etc/redis/redis.conf
+      sudo sed -i 's/bind 127.0.0.1 ::1/bind 0.0.0.0/g' /etc/redis/redis.conf
+      sudo systemctl restart redis
+  
+      # node js
+      curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+      sudo apt install nodejs -y
+
+      sudo npm install pm2 -g

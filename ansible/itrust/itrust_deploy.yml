@@ -1,0 +1,7 @@
+
+- hosts: itrust
+  become: true
+  roles:
+    - role: mysql
+    - role: monitor_agent
+    - role: tomcat

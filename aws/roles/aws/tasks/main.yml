@@ -1,0 +1,11 @@
+---
+- name: Provision the AWS instance
+  shell: /bakerx/aws/aws.sh {{ secretKey }} {{ accessKey }}
+
+#   shell: pip3 install boto boto3 --user
+
+# - name: Export the AWS credentials
+#   shell: export AWS_ACCESS_KEY_ID={{ secretKey }}; AWS_SECRET_ACCESS_KEY={{ accessKey }}
+
+# - name: Provision AWS EC2 instance
+#   shell: python3 /bakerx/aws/aws.py

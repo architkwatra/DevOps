@@ -7,6 +7,8 @@ ansible/vars.txt
 vagrant@127.0.0.1
 .jenkins-api
 cm/cookies.txt
+ansible/cookies.txt
+aws/inventory.ini
 test.js
 test_suite_analysis/iTrust2-v8
 test_suite_analysis/.test-file
@@ -18,3 +20,5 @@ test_suite_analysis/.test-output2
 test_suite_analysis/.mutations
 test_suite_analysis/.is-mutable
 total-output
+aws/ec2.pem
+inventory.ini

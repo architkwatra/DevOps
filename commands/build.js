@@ -46,6 +46,7 @@ async function run(buildjobName, userName, password) {
     result = child.spawnSync("scp -o 'StrictHostKeyChecking=no' -o 'UserKnownHostsFile=/dev/null' -i ~/.bakerx/insecure_private_key ansible/jenkins-api.yml vagrant@192.168.33.20:~/", {shell:true, stdio: 'inherit'});
     result = await child.spawnSync("sed -i -e \'s\/\\r\$\/\\n\/\' cm/api-token.sh", {shell:true, stdio: 'inherit'});
     result = await child.spawnSync("sed -i -e \'s\/\\r\$\/\\n\/\' cm/staticAnalysis.sh", {shell:true, stdio: 'inherit'});
+    result = await child.spawnSync("chmod +x cm/staticAnalysis.sh", {shell:true, stdio: 'inherit'});
     result = await sshSync('sudo ansible-playbook --vault-password-file .vault-pass jenkins-api.yml', 'vagrant@192.168.33.20');
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
     // process.exit( result.status )
@@ -70,7 +71,7 @@ async function run(buildjobName, userName, password) {
         dsl: |
             node {
                 withCredentials([usernamePassword(credentialsId:'itrustidpass', passwordVariable: 'Password', usernameVariable: 'Username')]) {
-                    stage('Build') {
+                    stage('Clone') {
                         deleteDir()
                         sh '''
                             git clone --branch main https://$Username:$Password@github.ncsu.edu/engr-csc326-staff/iTrust2-v8.git
@@ -80,7 +81,8 @@ async function run(buildjobName, userName, password) {
                             cd ../../../
                             
                             rm pom.xml
-                            cp ../../../../../../../bakerx/pom/pom.xml pom.xml
+                            cp /bakerx/pom/pom.xml pom.xml
+                            pwd
                             ls
                         '''
                     }
@@ -99,6 +101,12 @@ async function run(buildjobName, userName, password) {
                         sh '''
                             mysql -u root -pdevops10 -e 'DROP DATABASE IF EXISTS iTrust2_test'
                             kill -9 '$(lsof -t -i:9001)' || true
+                        '''
+                    }
+                    stage('Build') {
+                        sh '''
+                            cd iTrust2-v8/iTrust2
+                            mvn compile war:war
                         '''
                     }
                 }

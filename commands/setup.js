@@ -2,7 +2,6 @@ const child = require('child_process');
 const chalk = require('chalk');
 const path = require('path');
 const os = require('os');
-const {execSync} = require('child_process');
 const fs = require('fs');
 
 const sshSync = require('../lib/ssh');
@@ -36,12 +35,12 @@ exports.handler = async argv => {
 async function run(ghUser, ghPass) {
     if (ghUser === undefined || ghPass === undefined) {
         console.log(chalk.bgRed("Please enter the github username and password")); 
-        process.exit( result.status );
+        process.exit( 1 );
     }
 
     console.log(chalk.greenBright('Installing configuration server!'));
     console.log(chalk.blueBright('Provisioning configuration server...'));
-    let result = await child.spawnSync(`bakerx`, `run config-srv focal --ip 192.168.33.20 --sync --memory 4096`.split(' '), {shell:true, stdio: 'inherit'} );
+    let result = await child.spawnSync(`bakerx`, `run config-srv focal --ip 192.168.33.20 --sync --memory 3074`.split(' '), {shell:true, stdio: 'inherit'} );
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
     await new Promise(resolve => setTimeout(resolve, 5000));
 
@@ -58,7 +57,6 @@ async function run(ghUser, ghPass) {
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
     await buildEnvironmentSetup(ghUser, ghPass);
-    
 }
 
 async function buildEnvironmentSetup(ghUser, ghPass){
@@ -76,15 +74,15 @@ async function buildEnvironmentSetup(ghUser, ghPass){
     result = await sshSync('sudo apt-get install --assume-yes nodejs npm git', 'vagrant@192.168.33.20');
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
-    console.log(chalk.blueBright('Installing and running mongodb...'));
-    result = await sshSync('sudo apt install -y mongodb', 'vagrant@192.168.33.20');
-    if( result.error ) { console.log(result.error); process.exit( result.status ); }
-    result = await sshSync('sudo service mongodb start', 'vagrant@192.168.33.20');
-    if( result.error ) { console.log(result.error); process.exit( result.status ); }
-    result = await sshSync('sudo systemctl status mongodb', 'vagrant@192.168.33.20');
-    if( result.error ) { console.log(result.error); process.exit( result.status ); }
-    result = await sshSync('sudo mongo admin db.js', 'vagrant@192.168.33.20');
-    if( result.error ) { console.log(result.error); process.exit( result.status ); }
+    // console.log(chalk.blueBright('Installing and running mongodb...'));
+    // result = await sshSync('sudo apt install -y mongodb', 'vagrant@192.168.33.20');
+    // if( result.error ) { console.log(result.error); process.exit( result.status ); }
+    // result = await sshSync('sudo service mongodb start', 'vagrant@192.168.33.20');
+    // if( result.error ) { console.log(result.error); process.exit( result.status ); }
+    // result = await sshSync('sudo systemctl status mongodb', 'vagrant@192.168.33.20');
+    // if( result.error ) { console.log(result.error); process.exit( result.status ); }
+    // result = await sshSync('sudo mongo admin db.js', 'vagrant@192.168.33.20');
+    // if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
     //build job related work
     console.log(chalk.blueBright('Jenkins Job Builder...'));
@@ -102,8 +100,6 @@ async function buildEnvironmentSetup(ghUser, ghPass){
 
     //create API Token
     console.log(chalk.blueBright('API Token...'));
-    console.log(chalk.cyanBright(`"user=${ghUser}  pass=${ghPass}"`))
-
     result = child.spawnSync("sed -i -e \'s\/\\r\$\/\\n\/\' cm/api-token.sh", {shell:true, stdio: 'inherit'});
     result = sshSync(`sudo ansible-playbook --vault-password-file .vault-pass jenkins-api.yml -e 'user=${ghUser}' -e 'pwd=${ghPass}'`, 'vagrant@192.168.33.20');
                                                                                                         
@@ -113,16 +109,17 @@ async function buildEnvironmentSetup(ghUser, ghPass){
     console.log(chalk.blueBright('Restart Jenkins...'));
     result = await sshSync('sudo ansible-playbook /bakerx/cm/restart-jenkins.yml', 'vagrant@192.168.33.20');
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
-    await fs.unlinkSync('.jenkins-api');
 
-    await setupITrust()
+    try {
+        fs.unlinkSync('.jenkins-api');
+    } catch {
+        console.log(chalk.bgRed("Either vault-pass file not created or some issue with jenkins api token generation"))
+    }
+    console.log(chalk.green("Starting the itrust setup"));
+    setupItrust();
 }
 
-async function setupITrust() {
-
-    // let result = child.spawnSync("chmod +x /bakerx/cm/iTrust-init.sh", {shell:true, stdio: 'inherit'});
-    // result = child.spawnSync("sed -i -e \'s\/\\r\$\/\\n\/\' /bakerx/cm/iTrust-init.sh", {shell:true, stdio: 'inherit'});
-    // result = sshSync('/bakerx/cm/iTrust-init.sh', 'vagrant@192.168.33.20');
-    let result = sshSync('ansible-playbook /bakerx/ansible/itrust.yml', 'vagrant@192.168.33.20');
+function setupItrust() {
+    result = sshSync('sudo ansible-playbook /bakerx/ansible/itrust/itrust_setup.yml', 'vagrant@192.168.33.20');
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 }

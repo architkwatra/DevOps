@@ -1,40 +1,29 @@
 ## <b>Checkpoint</b>
 
-* Store `gh-password` in Jenkins credentials manager. <b>In Progress</b>
-* The command `useful-tests` should be run on the config-srv. <b>Not Started</b>
+### Provision cloud instances and setup monitoring infrastructure. (Owner: Archit Kwatra)
 
-### 🛠️Automatically configure a build environment and build job (iTrust) (Owner: Archit Kwatra)
-
-* Create a build environment for [iTrust2-v8](https://github.ncsu.edu/engr-csc326-staff/iTrust2-v8), an "enterprise" Java system. <b>In Progress</b>
-* Checkstyle and code coverage <b>In Progress</b>
-
+* Provision instances for your target infrastructure on a cloud provide  <b>Complete</b>
+* Generate an inventory.ini with your cloud resources  <b>Complete</b>
   
-### 🧪 Implement a test suite analysis for detecting useful tests (Owner: Santosh Pisapati)
+### Implement deployment to cloud instances.(Owner: Santosh Pisapati)
 
-* Implement a fuzzer that performs the following operations <b>Implemented</b> (Issue [#68](https://github.ncsu.edu/cscdevops-spring2021/DEVOPS-10/issues/68))
+* Deploy checkbox.io to your production environment provided in inventory.ini <b>In Progress</b>
+* Deploy iTrust to your production environment provided in inventory.ini <b>Not Started</b>
 
-### Test prioritization analysis (Owner: Santosh Pisapati)
-   * Generate random changes with your code fuzzer.  <b>Not Started</b>
-   * If your changes would result in compile failures, discard changes and restart process.  <b>Not Started</b>
-   * Run units tests with `mvn clean test`.  <b>Not Started</b>
-   * Record which test cases have failed, and which have passed.  <b>Not Started</b>
-   * Reset code, *drop database*, discarding your changes.  <b>Not Started</b>
-   * discard changes that would result in compile failures.  <b>Not Started</b>
-   * 1000 test suite runs to perform your test suite analysis.  <b>Not Started</b>
-   * calculate failure/passed results for *individual test cases and not *test classes*.  <b>Not Started</b>
+### Implement canary analysis (checkbox.io preview microservice) (Owner: Lokesh Reddy)
+   * Construct a computing environment with three VMs as shown in diagram (locally)  <b>Completed</b>
+   * Generate load to the proxy server by requesting the /preview service.  <b>Completed</b>
+   * For the first 1 minute, send the load to the blue instance, collect health metrics. <b>In Progress</b>
+   * Next, send traffic to the green instance for 1 minute, collect health metrics. <b>Not Started</b>
+   * Report a statistical comparision between health values and compute a canary score. Determine whether canary has "passed" or "failed". <b>Not Started</b>
 
-### ✅ Implement a static analysis for checkbox.io (Owner: Lokesh Reddy)
-   * Long method: Detect long methods (>100 LOC). <b>In Progress</b>
-   * Message Chains: Detect message chains (> 10 chains) <b>In Progress</b>
-   * MaxNestingDepth: Count max depth of if statements in a function (> 5) <b>In Progress</b>
-   * Build Log Report <b>Not Started</b>
-   * Run the analysis on all javascript files inside of the server-side/ directory  <b>Not Started</b>
-   * Report **all violations** discovered in build log  <b>Not Started</b>
-   * Fail the build if *any* of these metrics exceed the given threshold.  <b>Not Started</b>
-
+### Bonus: Monitoring Dashboard (Owner: All)
+  * Create a monitor-setup -i inventory.ini command that deploys a monitoring dashboard <b>Not Started</b>
+  * Expose the dashboard endpoint on http://<monitoring ip>/dashboard. <b>Not Started</b>
+  
 ### Current progress
-- Total Issues: 18
-- Closed Issues: 1
-- Open Issues: 17
+- Total Issues: 10
+- Closed Issues: 2
+- Open Issues: 8
 
-![](https://github.ncsu.edu/cscdevops-spring2021/DEVOPS-10/blob/master/kanban2.PNG)<br>
+![](https://github.ncsu.edu/cscdevops-spring2021/DEVOPS-10/blob/master/kanban3.PNG)<br>
