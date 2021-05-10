@@ -1,0 +1,10 @@
+- name: jenkins run
+  hosts: localhost
+  become: true
+  vars_files:
+    - vault-vars.yml
+  tasks:
+  - name: chmod api-token.sh
+    shell: chmod +x /bakerx/cm/api-token.sh
+  - name: Generate API Token
+    shell: /bakerx/cm/api-token.sh {{ JENKINS_USER }} {{ JENKINS_PASSWORD }}

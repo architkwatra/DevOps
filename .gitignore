@@ -1,0 +1,9 @@
+node_modules/
+cm/jenkins-jobs.ini
+cm/pipeline-build-job.yml
+cm/vars.sh
+.vault-pass
+ansible/vars.txt
+vagrant@127.0.0.1
+.jenkins-api
+cm/cookies.txt

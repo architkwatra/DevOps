@@ -1,0 +1,21 @@
+- name: ansible to add environment variables
+  hosts: localhost
+  become: true
+  vars_files:
+    - vault-vars.yml
+  tasks:
+  - name: create vars.sh
+    shell: touch vars.sh
+  - name: Add vars to file 
+    blockinfile:
+      path: vars.sh
+      block: |
+        export MONGO_PORT={{ MONGO_PORT }}
+        export APP_PORT={{ APP_PORT }}
+        export MONGO_IP={{ MONGO_IP }}
+        export MONGO_USER={{ MONGO_USER }}
+        export MONGO_PASSWORD={{ MONGO_PASSWORD }}
+  - name: create db user
+    shell:
+        cmd: >
+            echo "db.createUser({user:\"{{MONGO_USER}}\",pwd:\"{{MONGO_PASSWORD}}\",roles:[\"readWrite\"]});" > db.js

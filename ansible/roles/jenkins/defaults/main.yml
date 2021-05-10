@@ -1,0 +1,16 @@
+---
+jenkins_init_changes:
+  - option: "JENKINS_ARGS"
+    value: "--prefix=''"
+  - option: "JAVA_ARGS"
+    value: "-Djenkins.install.runSetupWizard=false"
+
+# If Jenkins is behind a proxy, configure this.
+jenkins_proxy_host: ""
+jenkins_proxy_port: ""
+jenkins_proxy_noproxy:
+  - "127.0.0.1"
+  - "localhost"
+
+# my_jenkins_params:
+#   url_username: admin

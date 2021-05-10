@@ -1,0 +1,22 @@
+- hosts: localhost
+  tasks:
+    
+  - name: Restart Jenkins
+    become: true
+    systemd: 
+      name: jenkins
+      state: restarted
+      enabled: true
+
+  - name: Wait for Jenkins to start up
+    uri:
+      url: http://192.168.33.20:9000/
+      status_code: 200
+      timeout: 5
+    register: jenkins_service_status
+    # Keep trying for 5 mins in 5 sec intervals
+    retries: 20
+    delay: 5
+    until: >
+      'status' in jenkins_service_status and
+      jenkins_service_status['status'] == 200
